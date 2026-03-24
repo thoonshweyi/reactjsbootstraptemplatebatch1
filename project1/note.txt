@@ -1,0 +1,70 @@
+=> Install React
+
+npm create vite@latest          // Set-ExecutionPolicy RemoteSigned
+y
+my-app
+React
+Javascript
+yes
+cd my-app
+npm install
+npm run dev
+
+-------------------------------------------------------------------------------
+=>Install Bootstrap (v ^5.3.8), (^2.11.8)
+
+npm install bootstrap @popperjs/core
+    (i) Import Bootstrap CSS in your main.jsx or App.jsx
+            import "bootstrap/dist/css/bootstrap.min.css"
+            import "bootstrap/dist/js/bootstrap.bundle.min.js"
+-------------------------------------------------------------------------------
+=>Install Fontawesome (v ^6.7.2, v ^0.2.2)
+
+    Fontawesome brand svg icon = (v ^7.2.0)
+    Fontawesome brand regular icon = (v ^7.2.0)
+    Fontawesome brand solid icon = (v ^7.2.0)
+
+    Fontawesome svg core = (v ^7.2.0)
+
+    React-Fontawesome (v ^3.2.0)
+
+     https://docs.fontawesome.com/web/use-with/react
+
+     (i) install 
+          npm i --save @fortawesome/fontawesome-svg-core
+          npm i --save @fortawesome/react-fontawesome@latest
+
+          npm i --save @fortawesome/free-solid-svg-icons
+          npm i --save @fortawesome/free-regular-svg-icons
+          npm i --save @fortawesome/free-brands-svg-icons
+     (ii) Create a Fontawesome config file
+          src > libs > fontawesome.js
+
+
+          import { library } from '@fortawesome/fontawesome-svg-core'
+          import { fab } from '@fortawesome/free-brands-svg-icons'
+          import { far } from '@fortawesome/free-regular-svg-icons'
+          import { fas } from '@fortawesome/free-solid-svg-icons'
+               
+          library.add(fab, far, fas)
+     (iii) Import Config to src/main.jsx
+          src > main.jsx
+          
+          import './libs/fontawesome.js'
+
+     (iv) Usage in Componnts
+          import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+          <FontAwesomeIcon icon="fa-brands fa-square-facebook" />
+-------------------------------------------------------------------------------
+=>React Router (v ^7.13.1 )
+     https://reactrouter.com/en/main
+
+     1.install
+     https://reactrouter.com/start/data/installation
+     npm i react-router
+
+
+     2.import
+     import {BrowserRouter, Routes, Route} from "react-router"
+-------------------------------------------------------------------------------
