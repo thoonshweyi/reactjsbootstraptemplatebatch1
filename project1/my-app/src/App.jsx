@@ -29,7 +29,7 @@ function App() {
 			{/* Sidebar */}
 			<Sidebar/>
 			
-			<div className='main-contents'>
+			<div className='main-contents sidebar-open'>
 				{/* Header */}
 				<Header/>
 
