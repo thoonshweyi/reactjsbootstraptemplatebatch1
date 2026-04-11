@@ -21,17 +21,19 @@ import Logout from "./pages/Logout";
 
 function App() {
 
+	const [sidebarOpen, setsidebarOpen] = useState(true);
+
   return (
 	<Router>
 
 		<div className='containers'>
 
 			{/* Sidebar */}
-			<Sidebar/>
+			<Sidebar  toggleSidebar={()=>setsidebarOpen(!sidebarOpen)} isOpen={sidebarOpen}/>
 			
-			<div className='main-contents sidebar-open'>
+			<div className={`main-contents ${sidebarOpen ? 'sidebar-open': ''}`}>
 				{/* Header */}
-				<Header/>
+				<Header toggleSidebar={()=>setsidebarOpen(!sidebarOpen)}/>
 
 				<div className='content-wrappers'>
 					<Routes>

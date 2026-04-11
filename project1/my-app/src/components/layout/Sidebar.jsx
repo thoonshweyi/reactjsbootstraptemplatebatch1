@@ -17,9 +17,9 @@ const Sidebar = ({toggleSidebar,isOpen=true})=>{
     ];
 
     return (
-        <aside className="sidebar">
+        <aside className={`sidebar ${isOpen ? "" : "collapsed"}`}>
             {/* Header */}
-            <div>
+            <div className="d-flex justify-content-between align-items-center p-4">
 
                 {
                     isOpen && (
@@ -48,29 +48,36 @@ const Sidebar = ({toggleSidebar,isOpen=true})=>{
                         ))
                     }
                 </ul>
-            </div>
 
-            {/* User */}
-            <div className="bg-dark bg-opacity-25 mt-5 p-3">
-                <div className="d-flex align-items-center">
+                    
+                {/* User Profile */}
+                {
+                    isOpen && (
+                    <div className="bg-dark bg-opacity-25 mt-5 p-3">
+                        <div className="d-flex align-items-center">
 
-                    <div className="me-3">
-                        <div className="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center" style={{width:"40px", height:"40px"}}>
-                            <FontAwesomeIcon icon={faUser} />
+                            <div className="me-3">
+                                <div className="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center" style={{width:"40px", height:"40px"}}>
+                                    <FontAwesomeIcon icon={faUser} />
+                                </div>
+                            </div>
+                            <div>
+                                <h6 className="text-white mb-0">Kyaw Kyaw</h6>
+                                <small className="text-white opacity-75">Administrator</small>
+                            </div>
                         </div>
                     </div>
-                    <div>
-                        <h6 className="text-white mb-0">Kyaw Kyaw</h6>
-                        <small className="text-white opacity-75">Administrator</small>
-                    </div>
-                </div>
+                    )
+                }
+
             </div>
+
 
             {/* Footer */}
             <div className="p-3">
                 <NavLink to="/logout" className="nav-link text-white d-flex align-items-center">
                     <FontAwesomeIcon icon={faRightFromBracket} className="me-2" />
-                    <span className="ms-3">Logout</span>
+                    {isOpen && <span className="ms-3">Logout</span>}
                 </NavLink>
             </div>
 

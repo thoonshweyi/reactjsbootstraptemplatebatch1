@@ -3,14 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import {faBars, faBell, faUser, faGear, faUserGear, faRightFromBracket, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
 
-const Header = ()=>{
+const Header = ({toggleSidebar})=>{
     return (
         <header className="headers">
             <div className="d-flex align-items-center justify-content-between">
                {/* left */}
                 <div className="d-flex align-items-center">
                     {/* sidebar toggler */}
-                    <button className="btn btn-light me-3" style={{width: "40px",height: "40px",borderRadius:"50%"}}>
+                    <button className="btn btn-light me-3" style={{width: "40px",height: "40px",borderRadius:"50%", padding: 0}} onClick={toggleSidebar}>
                         <FontAwesomeIcon icon={faBars} />
                     </button>
 
