@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import UserTable from "../components/user/UserTable";
+import UserModal from "../components/user/UserModal";
 
 const Users = ()=>{
 
@@ -45,7 +47,7 @@ const Users = ()=>{
             id:4,
             name: 'Hnin Hnin',
             email: 'hninhnin@gmail.com',
-            role: 'Admin',
+            role: 'User',
             status: 'Active',
             joinDate: '2024-01-15',
             phone: '+95 4 4444 4444',
@@ -70,11 +72,11 @@ const Users = ()=>{
     },[]);
 
     // Filter users based on seaerch term
-    const filteredUsers = users.filter(user=>{
+    const filteredUsers = users.filter(user=>(
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) 
         || user.email.toLowerCase().includes(searchTerm.toLowerCase())
         || user.role.toLowerCase().includes(searchTerm.toLowerCase())
-    });
+    ));
 
     // Create/Update Handler
     const saveuserHandler = (userData)=>{
@@ -128,7 +130,7 @@ const Users = ()=>{
                             <div className="d-flex justify-content-between align-items-center">
                                 <div>
                                     <h6 className="text-muted mb-1">Total Users</h6>
-                                    <h3 className="mb-0">3</h3>
+                                    <h3 className="mb-0">{users.length}</h3>
                                 </div>
 
                                 <div className="bg-primary bg-opacity-10 text-primary rounded-circle p-3">
@@ -145,7 +147,7 @@ const Users = ()=>{
                             <div className="d-flex justify-content-between align-items-center">
                                 <div>
                                     <h6 className="text-muted mb-1">Active Users</h6>
-                                    <h3 className="mb-0">1</h3>
+                                    <h3 className="mb-0">{users.filter(user=>user.status === "Active").length}</h3>
                                 </div>
                                 <span className="badge bg-success p-2">Active</span>
                             </div>
@@ -159,7 +161,7 @@ const Users = ()=>{
                             <div className="d-flex justify-content-between align-items-center">
                                 <div>
                                     <h6 className="text-muted mb-1">Admins</h6>
-                                    <h3 className="mb-0">1</h3>
+                                    <h3 className="mb-0">{users.filter(user=>user.role === "Admin").length}</h3>
                                 </div>
                                 <span className="badge bg-warning p-2">Admin</span>
                             </div>
@@ -173,7 +175,7 @@ const Users = ()=>{
                             <div className="d-flex justify-content-between align-items-center">
                                 <div>
                                     <h6 className="text-muted mb-1">Inactive</h6>
-                                    <h3 className="mb-0">2</h3>
+                                    <h3 className="mb-0">{users.filter(user=>user.status === "Inactive").length}</h3>
                                 </div>
                                 <span className="badge bg-danger p-2">Inactive</span>
                             </div>
@@ -183,10 +185,34 @@ const Users = ()=>{
             </div>
 
             {/* Search and Filters */}
+            <div className="card mb-3 dashboard-card">
+                <div className="card-body">
+                    <div className="row g-3 align-items-center">
+                        <div className="col-md-6">
+                            <div className="input-group">
+                                <span className="input-group-text bg-light border-0">icon</span>
+                                <input type="text" className="form-control bg-light border-0" placeholder="Search users by name, email, or role...."  value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)}/>
+                            </div>
+                        </div>
+                        <div className="col-md-6 text-md-end">
+                            <div className="d-flex gap-2 justify-content-md-end">
+                                <button className="btn btn-outline-secondary">Filter</button>
+                                <button className="btn btn-outline-secondary">Export</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            {/* sers Table */}
+            {/* Users Table */}
+            <div className="card dashboard-card">
+                <div className="card-body">
+                    <UserTable users={filteredUsers} onEdit={editMode} onDelete={deleteHandler} onToggleStatus={statustoggleHandler} />
+                </div>
+            </div>
 
             {/* User Modal */}
+            <UserModal user={editingUser} />
         </div>
     )
 }
