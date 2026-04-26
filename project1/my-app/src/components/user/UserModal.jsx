@@ -1,6 +1,6 @@
 import React from "react";
 
-const UserModal = ({})=>{
+const UserModal = ({user})=>{
 
     return (
         <div className="modal">
