@@ -2,6 +2,30 @@ import React from "react";
 
 const UserTable = ({users,onEdit,onDelete,onToggleStatus})=>{
     console.log(users);
+    const getStatusBadge = (status)=>{
+        switch(status){
+            case 'Active':
+                return <span className="badge bg-success">Active</span>;
+            case 'Inactive':
+                return <span className="badge bg-danger">Inactive</span>;
+            case 'Pending':
+                return <span className="badge bg-warning">Pending</span>;
+            default: 
+                return <span className="badge bg-secondary">{status}</span>;
+        }
+    };
+
+    const getRoleBadge = (role)=>{
+        switch(role){
+            case 'Admin':
+                return <span className="badge bg-primary">Admin</span>;
+            case 'Moderator':
+                return <span className="badge bg-info">Moderator</span>;
+            default: 
+                return <span className="badge bg-secondary">{role}</span>;
+        }
+    };
+
     return (
         <div className="table table-responsive">
             <table className="table table-sm table-hover align-middle">
@@ -34,13 +58,13 @@ const UserTable = ({users,onEdit,onDelete,onToggleStatus})=>{
                                         </div>
                                     </div>
                                 </td>
-                                <td> {user.role}</td>
-                                <td>{user.status}</td>
+                                <td>{ getRoleBadge(user.role)}</td>
+                                <td>{ getStatusBadge(user.status) }</td>
                                 <td>{new Date(user.joinDate).toLocaleDateString()}</td>
                                 <td className="text-end">
                                     <div className="d-flex justify-content-end gap-2">
-                                        <button className="btn btn-outline-primary btn-sm rounded-0 d-flex align-items-center" onClick={()=>onEdit(user)}>Edit</button>
-                                        <button className="btn btn-outline-secondary btn-sm rounded-0 d-flex align-items-center" onClick={()=>onToggleStatus(user.id)}>{user.status === "Active" ? "Deactivate" : "Activate"}</button>
+                                        <button className="btn btn-outline-primary btn-sm d-flex align-items-center" onClick={()=>onEdit(user)}>Edit</button>
+                                        <button className="btn btn-outline-secondary btn-sm d-flex align-items-center" onClick={()=>onToggleStatus(user.id)}>{user.status === "Active" ? "Deactivate" : "Activate"}</button>
                                         <div className="dropdown">
                                             <button type="button" className="btn btn-outline-light btn-sm text-dark dropdown-toggle" data-bs-toggle="dropdown"></button>
                                             <ul className="dropdown-menu dropdown-menu-endd">

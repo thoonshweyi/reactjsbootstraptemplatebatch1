@@ -99,13 +99,23 @@ const Users = ()=>{
     // Delete Handler
     const deleteHandler = (id)=>{
         if(window.confirm('Are you sure you want to delete this user?')){
+            setUsers(users.filter(user=>user.id !== id));
+            
+            // toast 
+            // Toast.success('User delete successfully!');
 
         }
     };
 
     // Status Toggle Handler
     const statustoggleHandler = (id)=>{
+     
 
+        setUsers(users.map(user=>
+            user.id == id ? {...user,status: user.status === "Active" ? "Inactive" : "Active"} : user
+        ));
+
+        // Toast.success('User status updated!');
     }
 
     return (
@@ -212,7 +222,10 @@ const Users = ()=>{
             </div>
 
             {/* User Modal */}
-            <UserModal user={editingUser} />
+            <UserModal user={editingUser} show={showModal} onHide={()=>{
+                setShowModal(false);
+                setEditingUser(null);
+            }} onSave={saveuserHandler} />
         </div>
     )
 }
