@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import UserTable from "../components/user/UserTable";
 import UserModal from "../components/user/UserModal";
 
+import { ToastContainer, toast } from 'react-toastify';
+
 const Users = ()=>{
 
     const [users, setUsers] = useState([]);
@@ -82,8 +84,31 @@ const Users = ()=>{
     const saveuserHandler = (userData)=>{
         if(editingUser){
             // Update user
+
+
+            setUsers(users.map(user=>
+                user.id === editingUser.id ? {
+                    ...userData,
+                    id:editingUser.id,
+                    joinDate: new Date(user.joinDate).toISOString().split('T')[0],
+                    avatar: userData.name.split(' ').map(n=>n[0]).join('').toUpperCase()
+                }  : user
+            ))
+
+            toast.success("User updated successfully");
+
         }else{
             // Create new user
+            const newuser = {
+                ...userData,
+                id: users.length > 0 ? Math.max(...users.map(user=>user.id))+1 :1,
+                joinDate: new Date().toISOString().split('T')[0],
+                avatar: userData.name.split(' ').map(n=>n[0]).join('').toUpperCase()
+            }
+
+            setUsers([...users,newuser])
+
+            toast.success("User created successfully");
         }
 
         setShowModal(false);
@@ -102,7 +127,7 @@ const Users = ()=>{
             setUsers(users.filter(user=>user.id !== id));
             
             // toast 
-            // Toast.success('User delete successfully!');
+            toast.success('User delete successfully!');
 
         }
     };
@@ -115,7 +140,7 @@ const Users = ()=>{
             user.id == id ? {...user,status: user.status === "Active" ? "Inactive" : "Active"} : user
         ));
 
-        // Toast.success('User status updated!');
+        toast.success('User status updated!');
     }
 
     return (

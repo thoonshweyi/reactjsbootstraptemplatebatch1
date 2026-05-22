@@ -1,4 +1,4 @@
-import React,{useState,useEffet} from "react";
+import React,{useState,useEffect} from "react";
 
 const UserModal = ({show,onHide,user,onSave})=>{
     const [formData,setFormData] = useState({
@@ -22,7 +22,7 @@ const UserModal = ({show,onHide,user,onSave})=>{
 
         if(!formData.email.trim()){
             newErrors.email = 'Email is required';
-        }else if(!/\S+@\S\.\S/.test(formData.email)){
+        }else if(!/\S+@\S+\.\S+/.test(formData.email)){
             // \S+ mean one or more non-space characters
             newErrors.email = 'Email is invalid';
         }
@@ -39,8 +39,33 @@ const UserModal = ({show,onHide,user,onSave})=>{
 
         console.log(newErrors);
 
+        console.log(new Date().toISOString().split('T')[0]);
+
         return Object.keys(newErrors).length === 0;
     };
+
+    useEffect(()=>{
+        if(user){
+            setFormData({
+                    name: user.name || '',
+                    email: user.email || '',
+                    role: user.role || 'User',
+                    status: user.status || 'Active',
+                    phone: user.phone || '',
+                    address: user.address || ''
+                })
+        }else{
+            setFormData({
+                name: '',
+                email: '',
+                role: 'User',
+                status: 'Active',
+                phone: '',
+                address: '',
+                password: ''
+            })
+        }
+    },[user,show]);
 
     const submitHandler = ()=>{
         if(validateForm()){
@@ -55,6 +80,14 @@ const UserModal = ({show,onHide,user,onSave})=>{
             ...prev,
             [name]: value,
         }));
+
+        // Clear error when user starts typing
+        if(errors[name]){
+            setErrors((prev)=>({
+                ...prev,
+                [name]: '',
+            }))
+        }
     }
 
 
@@ -66,7 +99,7 @@ const UserModal = ({show,onHide,user,onSave})=>{
                 <div className="modal-content modal-custom">
                     <div className="modal-header">
                         <h6 className="modal-title">{user ? "Edit User": "Create New User"}</h6>
-                        <button type="button" className="btn-close"></button>
+                        <button type="button" className="btn-close" onClick={onHide}></button>
                     </div>
                     <div className="modal-body">
                         <form>
@@ -97,7 +130,7 @@ const UserModal = ({show,onHide,user,onSave})=>{
                                     <select name="role" id="role" className={`form-select ${errors.role ? 'is-invalid' : ''}`} value={formData.role} onChange={changeHandler}>
                                         <option value="User">User</option>
                                         <option value="Administrator">Administrator</option>
-                                        <option value="Modereator">Modereator</option>
+                                        <option value="Moderator">Modereator</option>
                                         <option value="Editor">Editor</option>
                                         <option value="Viewer">Viewer</option>
                                     </select>
@@ -148,7 +181,7 @@ const UserModal = ({show,onHide,user,onSave})=>{
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" onClick={onHide}>Cancel</button>
-                        <button type="button" className="btn btn-primary">{user ? 'Update User' : 'Create User' }</button>
+                        <button type="button" className="btn btn-primary" onClick={submitHandler}>{user ? 'Update User' : 'Create User' }</button>
                     </div>
                 </div>
             </div>

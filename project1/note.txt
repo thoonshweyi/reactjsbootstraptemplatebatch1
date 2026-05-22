@@ -1,70 +1,257 @@
 => Install React
 
-npm create vite@latest          // Set-ExecutionPolicy RemoteSigned
-y
+npm create vite@latest
 my-app
 React
-Javascript
-yes
+javascript
 cd my-app
-npm install
+npm install 
 npm run dev
 
--------------------------------------------------------------------------------
-=>Install Bootstrap (v ^5.3.8), (^2.11.8)
+---------------------------------------------------------------------------
+
+=> React Router  (v ^7.6.0)
+https://reactrouter.com/en/main
+
+1. install
+https://reactrouter.com/start/data/installation
+npm i react-router
+
+2. import 
+import {BrowserRouter,Routes,Route}  from "react-router"
+
+---------------------------------------------------------------------------
+
+=> React-toastify ( v ^11.1.0 )
+
+    https://fkhadra.github.io/react-toastify/introduction/
+    https://www.npmjs.com/package/react-toastify
+
+    (i) install 
+    npm i react-toastify
+
+
+    (ii) Import 
+    // src/main.jsx   or  your Components
+
+    import { ToastContainer, toast } from 'react-toastify';
+
+
+    <ToastContainer />
+
+---------------------------------------------------------------------------
+
+=> React Redux (v "react-redux": "^9.2.0" , v "@reduxjs/toolkit": "^2.8.1")
+
+https://redux.js.org/
+
+1.install
+
+npm install @reduxjs/toolkit react-redux
+
+
+---------------------------------------------------------------------------
+
+Current Version = "react": "^19.1.0", ( 8 May 2025 )
+
+=> React Hook 
+    React v16.8
+    ( just for Functional Components )
+
+    useState()
+    useEffect()
+    useContext()
+
+
+
+=> React Redux ( third-party library ) ( current version = "react-redux": "^9.2.0" )
+    global state management
+
+    1.Store  =  to store "Global State"
+    2.Actions = Function sthat describe what should happen
+    3.Reducers = create logic functions to change "State"
+    4.Dispatch = Mechanism to send actions to reducers
+
+---------------------------------------------------------------------------
+
+
+=> axios (v ^1.9.0 ) 
+
+https://axios-http.com/docs/intro
+https://www.npmjs.com/
+https://www.npmjs.com/package/axios
+
+npm install axios
+
+---------------------------------------------------------------------------
+
+
+=> Set up Express API (backend) ( "cors": "^2.8.5", "express": "^5.1.0" )
+
+mkdir expressapi
+cd expressapi
+npm init -y
+npm install express cors
+
+
+create server.js
+
+node server.js
+
+
+---------------------------------------------------------------------------
+
+=> Install UUID package  (ver : ^11.1.0)
+
+npm install uuid 
+
+
+eg : with destructuring 
+const {v4:uuidv4} = require('uuid');
+
+
+eg : without destructuring 
+const uuid = require('uuid');
+const uuidv4 = uuid.v4;
+
+
+---------------------------------------------------------------------------
+
+=> Install Bootstrap (v ^5.3.7 )
 
 npm install bootstrap @popperjs/core
-    (i) Import Bootstrap CSS in your main.jsx or App.jsx
-            import "bootstrap/dist/css/bootstrap.min.css"
-            import "bootstrap/dist/js/bootstrap.bundle.min.js"
--------------------------------------------------------------------------------
-=>Install Fontawesome (v ^6.7.2, v ^0.2.2)
 
-    Fontawesome brand svg icon = (v ^7.2.0)
-    Fontawesome brand regular icon = (v ^7.2.0)
-    Fontawesome brand solid icon = (v ^7.2.0)
-
-    Fontawesome svg core = (v ^7.2.0)
-
-    React-Fontawesome (v ^3.2.0)
-
-     https://docs.fontawesome.com/web/use-with/react
-
-     (i) install 
-          npm i --save @fortawesome/fontawesome-svg-core
-          npm i --save @fortawesome/react-fontawesome@latest
-
-          npm i --save @fortawesome/free-solid-svg-icons
-          npm i --save @fortawesome/free-regular-svg-icons
-          npm i --save @fortawesome/free-brands-svg-icons
-     (ii) Create a Fontawesome config file
-          src > libs > fontawesome.js
+    (i) Import Bootstrap CSS in your main.jsx or App.jsx 
+        import 'bootstrap/dist/css/bootstrap.min.css'
+        import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
 
-          import { library } from '@fortawesome/fontawesome-svg-core'
-          import { fab } from '@fortawesome/free-brands-svg-icons'
-          import { far } from '@fortawesome/free-regular-svg-icons'
-          import { fas } from '@fortawesome/free-solid-svg-icons'
-               
-          library.add(fab, far, fas)
-     (iii) Import Config to src/main.jsx
-          src > main.jsx
-          
-          import './libs/fontawesome.js'
-
-     (iv) Usage in Componnts
-          import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
-          <FontAwesomeIcon icon="fa-brands fa-square-facebook" />
--------------------------------------------------------------------------------
-=>React Router (v ^7.13.1 )
-     https://reactrouter.com/en/main
-
-     1.install
-     https://reactrouter.com/start/data/installation
-     npm i react-router
+---------------------------------------------------------------------------
 
 
-     2.import
-     import {BrowserRouter, Routes, Route} from "react-router"
--------------------------------------------------------------------------------
+=> Install React-Fontawesome (v ^6.7.2 , ^0.2.2 )
+
+https://docs.fontawesome.com/web/use-with/react
+
+    (i) install
+        npm i --save @fortawesome/fontawesome-svg-core
+        npm i --save @fortawesome/react-fontawesome@latest
+        npm i --save @fortawesome/free-solid-svg-icons
+        npm i --save @fortawesome/free-regular-svg-icons
+        npm i --save @fortawesome/free-brands-svg-icons
+
+    (ii) Create a Fontawsome config file 
+        src > lib > fontawesome.js
+
+        import { library } from '@fortawesome/fontawesome-svg-core'
+        import { fab } from '@fortawesome/free-brands-svg-icons'
+        import { far } from '@fortawesome/free-regular-svg-icons'
+        import { fas } from '@fortawesome/free-solid-svg-icons'
+
+        library.add(fab,far,fas)
+
+    (iii) Import Config to src/main.jsx
+        src > main.jsx
+        
+        import './lib/fontawesome.js'
+
+    (iv) Usage in Components
+        import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+        <FontAwesomeIcon icon="fa-brands fa-square-facebook" />
+
+
+---------------------------------------------------------------------------
+
+
+=> Install jQuery and Inject (v ^3.7.1 , v ^5.0.5 )
+
+https://jquery.com/download/
+https://www.npmjs.com/package/@rollup/plugin-inject
+
+    (i) install jQuery
+    npm install jquery
+        
+
+    (ii) install Inject
+    npm install @rollup/plugin-inject --save-dev
+
+    ---------------------------
+
+    (iii) Vite config setting for Inject
+    // vite.config.js
+
+
+    import { defineConfig } from 'vite'
+    import react from '@vitejs/plugin-react'
+
+    // https://vite.dev/config/
+    export default defineConfig({
+    plugins: [
+        react(),
+        inject({
+        $:'jquery',
+        jQuery:'jquery'
+        })
+    ],
+    optimizeDeps:{
+        include:['jquery']
+    }
+    })
+
+
+    (iv) Import jQuery to your Components
+
+    import React,{ useEffect, useState } from "react";
+    import $ from 'jquery'
+
+    useEffect(()=>{
+        $('.titles').css('color','red');
+    },[])
+
+
+---------------------------------------------------------------------------
+
+
+
+=> Install lightbox2 (v ^2.11.5 )
+
+https://lokeshdhakar.com/projects/lightbox2/
+
+
+    (i) install
+    npm install lightbox2 --save
+        
+
+    (ii) Import 
+    // src/main.jsx   or  your Components
+
+    import { createRoot } from 'react-dom/client'
+    import { BrowserRouter as Router, Routes, Route, Link } from 'react-router';
+    import './lib/fontawesome.js'
+
+    import 'bootstrap/dist/css/bootstrap.min.css'
+    import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+
+    import 'lightbox2/dist/css/lightbox.min.css';
+    import 'lightbox2/dist/js/lightbox.min.js';
+
+    import './assets/css/style.css'
+
+    import App from './App.jsx'
+
+    createRoot(document.getElementById('root')).render(
+    <div>
+        <Router>
+        <App />
+        </Router>
+    </div>,
+    )
+
+
+
+---------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------
