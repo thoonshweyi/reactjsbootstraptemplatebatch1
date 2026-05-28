@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faMagnifyingGlass, faUser} from '@fortawesome/free-solid-svg-icons'
+
+
 import UserTable from "../components/user/UserTable";
 import UserModal from "../components/user/UserModal";
 
@@ -127,7 +131,7 @@ const Users = ()=>{
             setUsers(users.filter(user=>user.id !== id));
             
             // toast 
-            toast.success('User delete successfully!');
+            toast.warn('User delete successfully!');
 
         }
     };
@@ -140,7 +144,7 @@ const Users = ()=>{
             user.id == id ? {...user,status: user.status === "Active" ? "Inactive" : "Active"} : user
         ));
 
-        toast.success('User status updated!');
+        toast.info('User status updated!');
     }
 
     return (
@@ -149,7 +153,7 @@ const Users = ()=>{
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h6 className="mb-1">User Management</h6>
-                    <p>Maage your users and their permissions</p>
+                    <p>Manage your users and their permissions</p>
                 </div>
                 <button className="btn btn-primary d-flex align-items-center" onClick={()=>{
                     setEditingUser(null);
@@ -169,7 +173,7 @@ const Users = ()=>{
                                 </div>
 
                                 <div className="bg-primary bg-opacity-10 text-primary rounded-circle p-3">
-                                    <i>icon</i>
+                                    <FontAwesomeIcon icon={faUser}/>
                                 </div>
                             </div>
                         </div>
@@ -225,7 +229,7 @@ const Users = ()=>{
                     <div className="row g-3 align-items-center">
                         <div className="col-md-6">
                             <div className="input-group">
-                                <span className="input-group-text bg-light border-0">icon</span>
+                                <span className="input-group-text bg-light border-0"><FontAwesomeIcon icon={faMagnifyingGlass} /></span>
                                 <input type="text" className="form-control bg-light border-0" placeholder="Search users by name, email, or role...."  value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)}/>
                             </div>
                         </div>

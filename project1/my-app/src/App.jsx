@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import {BrowserRouter as Router, Routes, Route} from "react-router"
 
+import { ToastContainer } from 'react-toastify';
+
 import Header from "./components/layout/Header";
 import Sidebar from "./components/layout/Sidebar";
 
@@ -26,6 +28,7 @@ function App() {
   return (
 	<Router>
 
+		<ToastContainer />
 		<div className='containers'>
 
 			{/* Sidebar */}
