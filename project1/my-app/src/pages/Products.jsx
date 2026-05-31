@@ -19,8 +19,8 @@ const Products = ()=>{
             id: 2,
             name: 'Phone',
             category: 'Electronics',
-            price: 920,
-            stock: 10,
+            price: 900,
+            stock: 20,
             status: 'Active'
         },
         {
@@ -60,6 +60,11 @@ const Products = ()=>{
     const [editingId, setEditingId] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
+    const totalvalue = products.reduce(
+        (sum,product)=> sum + product.price * product.stock , 0
+    )
+
+    const activeproducts = products.filter(product=>product.status == 'Active');
 
     // Filter users based on seaerch term
     const filteredProduts = products.filter(user=>(
@@ -67,68 +72,90 @@ const Products = ()=>{
         || user.category.toLowerCase().includes(searchTerm.toLowerCase())
     ));
 
+    const changeHandler = (e)=>{
+        setFormData({
+            ...formData, 
+           [e.target.name]: e.target.value
+        })  
+    };
+
+    const resetHandler = ()=>{
+        setFormData({
+            name: '',
+            category: '',
+            price: '',
+            stock: '',
+            status: 'Active'
+        })
+
+        setEditingId(null);
+    };
+
     // Create/Update Handler
-    const saveHandler = (userData)=>{
-        if(editingUser){
-            // Update user
+    const submitHandler = (e)=>{
+        e.preventDefault();
 
-
-            setUsers(products.map(user=>
-                user.id === editingUser.id ? {
-                    ...userData,
-                    id:editingUser.id,
-                    joinDate: new Date(user.joinDate).toISOString().split('T')[0],
-                    avatar: userData.name.split(' ').map(n=>n[0]).join('').toUpperCase()
-                }  : user
-            ))
-
-            toast.success("User updated successfully");
-
-        }else{
-            // Create new user
-            const newuser = {
-                ...userData,
-                id: products.length > 0 ? Math.max(...products.map(user=>user.id))+1 :1,
-                joinDate: new Date().toISOString().split('T')[0],
-                avatar: userData.name.split(' ').map(n=>n[0]).join('').toUpperCase()
-            }
-
-            setUsers([...users,newuser])
-
-            toast.success("User created successfully");
+        if(!formData.name || !formData.category || !formData.price || !formData.stock){
+            toast.info("Please fill all fields")
+            return;
         }
 
-        setShowModal(false);
-        setEditingUser(null);
-    }
+        if(editingId){
+            // Update product
+
+            setProducts(products.map(product=>
+                product.id === editingId ? {
+                    ...product,
+                    ...formData,
+                    price: Number(formData.price),
+                    stock: Number(formData.stock)
+                }  : product
+            ))
+
+            toast.success("Product updated successfully");
+
+        }else{
+            // Create new product
+            // const newproduct = {
+            //     ...formData,
+            //     id: products.length > 0 ? Math.max(...products.map(user=>user.id))+1 :1,
+            // }
+
+            // setProducts([...products,newproduct])
+
+            setProducts([
+                ...products,
+                {
+                    ...formData,
+                    id: Date.now(),
+                    price: Number(formData.price),
+                    stock: Number(formData.stock)
+                }
+            ])
+
+            toast.success("Product created successfully");
+        }
+
+        resetHandler();
+    };
 
     // Edit action
-    const editMode = (user)=>{
-        setEditingUser(user);
-        setShowModal(true);
+    const editMode = (product)=>{
+        setEditingId(product.id);
+        setFormData(product);
     }
 
     // Delete Handler
     const deleteHandler = (id)=>{
-        if(window.confirm('Are you sure you want to delete this user?')){
-            setUsers(products.filter(user=>user.id !== id));
+        if(window.confirm('Are you sure you want to delete this product?')){
+            setProducts(products.filter(product=>product.id !== id));
             
             // toast 
-            toast.warn('User delete successfully!');
+            toast.warn('Product delete successfully!');
 
         }
     };
 
-    // Status Toggle Handler
-    const statustoggleHandler = (id)=>{
-     
-
-        setUsers(products.map(user=>
-            user.id == id ? {...user,status: user.status === "Active" ? "Inactive" : "Active"} : user
-        ));
-
-        toast.info('User status updated!');
-    };
 
     return (
         <div>
@@ -170,7 +197,7 @@ const Products = ()=>{
                                 </div>
                                 <div>
                                     <h6 className="text-muted mb-1">Active Products</h6>
-                                    <h3 className="fw-bold mb-0">{products.length}</h3>
+                                    <h3 className="fw-bold mb-0">{activeproducts.length}</h3>
                                 </div>
 
                             </div>
@@ -188,7 +215,7 @@ const Products = ()=>{
                                 </div>
                                 <div>
                                     <h6 className="text-warning mb-1">Stock Value</h6>
-                                    <h3 className="fw-bold mb-0">{products.length}</h3>
+                                    <h3 className="fw-bold mb-0">{totalvalue}</h3>
                                 </div>
 
                             </div>
@@ -208,31 +235,31 @@ const Products = ()=>{
                     <p className="text-muted mb-0">Fill product information below.</p>
                 </div>
                 <div className="card-body p-4 pt-0">
-                    <form action="">
+                    <form onSubmit={submitHandler}>
                         <div className="row g-3">
                             <div className="col-lg-3 col-md-6">
                                 <label htmlFor="form-label">Product Name</label>
-                                <input type="text" name="name" className="form-control" value={formData.name} onChange={saveHandler} placeholder="Laptop"/>
+                                <input type="text" name="name" className="form-control" value={formData.name} onChange={changeHandler} placeholder="Laptop"/>
                             </div>
 
                             <div className="col-lg-3 col-md-6">
                                 <label htmlFor="form-label">Category</label>
-                                <input type="text" name="category" className="form-control" value={formData.category} onChange={saveHandler} placeholder="Electronicss" />
+                                <input type="text" name="category" className="form-control" value={formData.category} onChange={changeHandler} placeholder="Electronicss" />
                             </div>
 
                             <div className="col-lg-2 col-md-6">
                                 <label htmlFor="form-label">Price</label>
-                                <input type="text" name="price" className="form-control" value={formData.price} onChange={saveHandler} placeholder="0" />
+                                <input type="text" name="price" className="form-control" value={formData.price} onChange={changeHandler} placeholder="0" />
                             </div>
 
                             <div className="col-lg-2 col-md-6">
                                 <label htmlFor="form-label">Stock</label>
-                                <input type="text" name="stock" className="form-control" value={formData.stock} onChange={saveHandler} placeholder="0" />
+                                <input type="text" name="stock" className="form-control" value={formData.stock} onChange={changeHandler} placeholder="0" />
                             </div>
 
                             <div className="col-lg-2 col-md-6">
                                 <label htmlFor="form-label">Status</label>
-                                <select name="status" className="form-control" value={formData.status} onChange={saveHandler}>
+                                <select name="status" className="form-control" value={formData.status} onChange={changeHandler}>
                                     <option value="Active">Active</option>
                                     <option value="Inactive">Inactive</option>
                                 </select>   
@@ -246,7 +273,7 @@ const Products = ()=>{
 
                             {
                                 editingId && (
-                                    <button type="button" className="btn btn-light px-4"> Cancel</button>
+                                    <button type="button" className="btn btn-light px-4" onClick={resetHandler}> Cancel</button>
                                 )
                             }
                            
@@ -302,8 +329,8 @@ const Products = ()=>{
                                                 <td ><span className="badge bg-light text-dark border">{filteredProdut.stock} pcs</span></td>
                                                 <td ><span className={`badge rounded-pill ${filteredProdut.status == 'Active' ? 'bg-success': 'bg-danger'}`}>{filteredProdut.status}</span></td>
                                                 <td className="text-end">
-                                                    <button type="button" className="btn btn-sm btn-outline-warning me-2"><FontAwesomeIcon icon={faEdit}/></button>
-                                                    <button type="button" className="btn btn-sm btn-outline-danger"><FontAwesomeIcon icon={faTrash} /></button>
+                                                    <button type="button" className="btn btn-sm btn-outline-warning me-2" onClick={()=>editMode(filteredProdut)}><FontAwesomeIcon icon={faEdit}/></button>
+                                                    <button type="button" className="btn btn-sm btn-outline-danger" onClick={()=>deleteHandler(filteredProdut.id)}><FontAwesomeIcon icon={faTrash} /></button>
                                                 </td>
                                             </tr>
                                         ))
