@@ -48,7 +48,7 @@ function App() {
 						<Route path='/calendar' element={<Calendar/>}></Route>
 
 						<Route path='/products' element={<Products/>}></Route>
-						<Route path='/profileSettings' element={<ProfileSettings/>}></Route>
+						<Route path='/profile' element={<ProfileSettings/>}></Route>
 						<Route path='/reports'Reports element={<Reports/>}></Route>
 						<Route path='/settings' element={<Settings/>}></Route>
 						<Route path='/users' element={<Users/>}></Route>
