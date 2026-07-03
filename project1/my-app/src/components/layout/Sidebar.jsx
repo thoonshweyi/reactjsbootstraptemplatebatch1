@@ -1,5 +1,5 @@
 import React from "react";
-import {NavLink} from "react-router"
+import {NavLink,Link} from "react-router"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faUser, faGear, faHouse, faBox, faChartLine, faCalendar, faFile, faFileLines, faRightFromBracket, faGrip, faChevronLeft, faChevronRight} from '@fortawesome/free-solid-svg-icons'
@@ -53,20 +53,22 @@ const Sidebar = ({toggleSidebar,isOpen=true})=>{
                 {/* User Profile */}
                 {
                     isOpen && (
-                    <div className="bg-dark bg-opacity-25 mt-5 p-3">
-                        <div className="d-flex align-items-center">
+                    <Link to={"/profile"} className="text-decoration-none">
+                        <div className="bg-dark bg-opacity-25 mt-5 p-3">
+                            <div className="d-flex align-items-center">
 
-                            <div className="me-3">
-                                <div className="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center" style={{width:"40px", height:"40px"}}>
-                                    <FontAwesomeIcon icon={faUser} />
+                                <div className="me-3">
+                                    <div className="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center" style={{width:"40px", height:"40px"}}>
+                                        <FontAwesomeIcon icon={faUser} />
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6 className="text-white mb-0">Kyaw Kyaw</h6>
+                                    <small className="text-white opacity-75">Administrator</small>
                                 </div>
                             </div>
-                            <div>
-                                <h6 className="text-white mb-0">Kyaw Kyaw</h6>
-                                <small className="text-white opacity-75">Administrator</small>
-                            </div>
                         </div>
-                    </div>
+                    </Link>
                     )
                 }
 

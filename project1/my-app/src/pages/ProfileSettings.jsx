@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faBell, faBriefcase, faCalendarDays, faCamera, faClock, faComments, faDesktop, faEnvelope, faGlobe, faLocationDot, faLock, faMobilePhone, faPaperPlane, faPhone, faShieldHalved, faUserCheck} from '@fortawesome/free-solid-svg-icons'
+import {faBell, faBriefcase, faCalendarDays, faCamera, faCircleCheck, faClock, faCog, faComments, faDesktop, faEnvelope, faGlobe, faLocationDot, faLock, faMobilePhone, faPaperPlane, faPhone, faShieldHalved, faTrash, faUserCheck} from '@fortawesome/free-solid-svg-icons'
 import {faGithub} from '@fortawesome/free-brands-svg-icons'
 
 const ProfileSettings = ()=>{
@@ -15,16 +15,50 @@ const ProfileSettings = ()=>{
         bio: "I build modern web application using React, Laravel, Node.js and MongoDB.",
         website: "https://dltmyanmar.com",
         github: "https://github.com/datalandtechnology"
-    })
+    });
+
+    const [showChat,setShowChat] = useState(false);
+    const [chatInput,setChatInput] = useState("");
+    const [messages,setMessages] = useState([
+        {
+            id:1,
+            sender: "support",
+            text: "Hi Aung Kyaw 👋 How can we help you today?"
+        },
+        {
+            id:2,
+            sender: "user",
+            text: "I need help with my account settings."
+        },
+    ]);
+    const sendMessageHandler = ()=>{
+        if(!chatInput.trim()) return;
+
+        const newmessage = {
+            id: Date.now(),
+            sender: "user",
+            text: chatInput
+        };
+
+        setMessages([...messages,newmessage]);
+        setChatInput("");
+    };
 
     const [activeTab,setActiveTab] = useState('overview');
+
+    const imageChangeHandler = (e)=>{
+        const file = e.target.files[0];
+        if(file){
+            setProfileImage(URL.createObjectURL(file));
+        }
+    }
     
     const menuitems = [
         {key: "overview", label: "Overview", icon: faUserCheck},
         {key: "profile", label: "Edit Profile", icon: faBriefcase},
         {key: "security", label: "Security", icon: faShieldHalved},
         {key: "notifications", label: "Notifications", icon: faBell},
-        {key: "activity", label: "Asctivity", icon: faClock},
+        {key: "activity", label: "Activity", icon: faClock},
     ];
 
     const devicesessions = [
@@ -42,7 +76,27 @@ const ProfileSettings = ()=>{
             time: "2 hours ago",
             icon: faMobilePhone
         },
-    ] 
+    ];
+    
+    const [notifys,setNotifys] = useState({
+        email:true,
+        sms: false,
+        loginAlert:true,
+        productUpdate:true
+    });
+
+    const notifyChangeHandler = (e)=>{
+        setNotifys({
+            ...notifys,
+            [e.target.name]: e.target.checked
+        });
+    }
+
+    const closeAccHandler = ()=>{
+        if(confirm("Are you sure you want to close this account?")){
+            alert("Acount close request submitted.")
+        }
+    }
 
     return (
         <div>
@@ -52,9 +106,7 @@ const ProfileSettings = ()=>{
                     <p className="text-muted mb-0">Manage your account, security, notification and activity settings.</p>
                 </div>
 
-                <button className="btn btn-outline-danger btn-sm rounded-3 px-4">
-                    Logout
-                </button>
+                <a href="/account" className="btn btn-outline-primary btn-sm rounded-3 px-4"><FontAwesomeIcon icon={faCog} className="me-2"/> Account Settings</a>
             </div>
 
             <div className="row g-4">
@@ -65,7 +117,7 @@ const ProfileSettings = ()=>{
                         <div className="card-body text-center p-4" style={{marginTop: "-80px"}}>
                             <div className="position-relative d-inline-block">
                                 <img src={profileImage} className="rounded-circle border border-4 border-white shadow" width="140" height="140" alt="profile" />
-                                <input type="file" id="profileImage" className="d-none" accept="image/*" />
+                                <input type="file" name="profileImage" id="profileImage" className="d-none" accept="image/*" onChange={imageChangeHandler} />
                                 <label htmlFor="profileImage" className="btn btn-primary rounded-circle position-absolute bottom-0 end-0 shadow" style={{width:"42px", height: "42px", cursor: "pointer"}}><FontAwesomeIcon icon={faCamera} /></label>
                             </div>
                             <h6 className="fw-bold mt-3 mb-1">{user.fullname}</h6>
@@ -301,7 +353,7 @@ const ProfileSettings = ()=>{
 
                                     {
                                         devicesessions.map((devicesession,idx)=>(
-                                         <div className="d-flex justify-content-between align-items-center border rounded-4 p-3 mb-3">
+                                         <div key={idx} className="d-flex justify-content-between align-items-center border rounded-4 p-3 mb-3">
                                                 <div className="d-flex align-items-center">
                                                     <FontAwesomeIcon icon={devicesession.icon} className="text-primary fs-4 me-3" />
                                                     <div>
@@ -329,19 +381,24 @@ const ProfileSettings = ()=>{
                             <div className="card border-0 shadow-sm rounded-4">
                                 <div className="card-header bg-white border-0 p-4">
                                     <h6>Notifcations</h6>
-                                    <p className="text-muted mb-0">Control email, SMS and system alerts.</p>
+                                    <p className="text-muted mb-0">Choose how you want to receive updates.</p>
                                 </div>
                                 <div className="card-body p-4 pt-0">
                                     {
-                                        ["Email Notifications","SMS Notifications","Order Alerts"].map((item,idx)=>(
-                                            <div key={idx} className="d-flex justify-content-between align-items-center border rounded-4 p-3 mb-3">
+                                        [
+                                            ["email","Email Notifications","Receive account and system emails."],
+                                            ["sms","SMS Notifications","Receive important SMS alerts"],
+                                            ["loginAlert","Login Alerts","Notify me for new device login."],
+                                            ["productUpdate","Product Updates","Receive product and order updates."]
+                                        ].map(([name,title,description])=>(
+                                            <div key={name} className="d-flex justify-content-between align-items-center border rounded-4 p-3 mb-3">
                                                 <div>
-                                                    <h6 className="fw-bold mb-1">{item}</h6>
-                                                    <p className="text-muted mb-0">Enable or disable {item.toLowerCase()}.</p>
+                                                    <h6 className="fw-bold mb-1">{title}</h6>
+                                                    <p className="text-muted mb-0">{description}.</p>
                                                 </div>
 
                                                 <div className="form-check form-switch">
-                                                    <input type="checkbox" className="form-check-input" defaultChecked={true} />
+                                                    <input type="checkbox" name={name} className="form-check-input" defaultChecked={notifys[name]} onChange={notifyChangeHandler} />
                                                 </div>
                                             </div>
                                         ))
@@ -354,27 +411,42 @@ const ProfileSettings = ()=>{
 
                     {
                         activeTab == 'activity' && (
-                            <div className="card border-0 shadow-sm rounded-4">
-                                <div className="card-header bg-white border-0 p-4">
-                                    <h6>Notifcations</h6>
-                                    <p className="text-muted mb-0">Control email, SMS and system alerts.</p>
-                                </div>
-                                <div className="card-body p-4 pt-0">
-                                    {
-                                        ["Email Notifications","SMS Notifications","Order Alerts"].map((item,idx)=>(
-                                            <div key={idx} className="d-flex justify-content-between align-items-center border rounded-4 p-3 mb-3">
-                                                <div>
-                                                    <h6 className="fw-bold mb-1">{item}</h6>
-                                                    <p className="text-muted mb-0">Enable or disable {item.toLowerCase()}.</p>
-                                                </div>
 
-                                                <div className="form-check form-switch">
-                                                    <input type="checkbox" className="form-check-input" defaultChecked={true} />
+                            <div>
+                                <div className="card border-0 shadow-sm rounded-4 mb-3">
+                                    <div className="card-header bg-white border-0 p-4">
+                                        <h6>Recent Activity</h6>
+                                        <p className="text-muted mb-0">Your latest account activities.</p>
+                                    </div>
+                                    <div className="card-body p-4 pt-0">
+                                        {
+                                            ["Updated profile information","Changed account pass","Logged in from Chrome browser","Enabled email notifications"].map((item,idx)=>(
+                                                <div key={idx} className="d-flex align-items-center border rounded-4 p-3 mb-3">
+                                                    <FontAwesomeIcon icon={faCircleCheck} className="text-success me-3 mt-1" />
+                                                    <div>
+                                                        <h6 className="fw-bold mb-1">{item}</h6>
+                                                        <p className="text-muted mb-0">{idx + 1} day ago.</p>
+                                                    </div>
                                                 </div>
+                                            ))
+                                        }
+                                    </div>
+                                </div>
+                                
+                                <div className="card border-0 shadow-sm rounded-4">
+                                    <div className="card-header bg-white border-0 p-4">
+                                        <h6>Danger Zone</h6>
+                                        <p className="text-muted mb-0">Sensitive account-level actions.</p>
+                                    </div>
+                                    <div className="card-body p-4 pt-0">
+                                        <div className="d-flex justify-content-between align-items-center border rounded-4 p-3">
+                                            <div>
+                                                <h6 className="fw-bold mb-1">Close Account</h6>
+                                                <p className="text-muted mb-0 small">Permanently close this account and remove all data.</p>
                                             </div>
-                                        ))
-                                    }
-                                    <button type="submit" className="btn btn-primary mt-4">Save Notification Settings</button>
+                                            <button type="button" className="btn btn-outline-danger btn-sm" onClick={closeAccHandler}><FontAwesomeIcon icon={faTrash} className="me-2" /> Close Account</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )
