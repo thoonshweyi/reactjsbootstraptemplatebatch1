@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faBell, faBriefcase, faCalendarDays, faCamera, faCircleCheck, faClock, faCog, faComments, faDesktop, faEnvelope, faGlobe, faLocationDot, faLock, faMobilePhone, faPaperPlane, faPhone, faShieldHalved, faTrash, faUserCheck} from '@fortawesome/free-solid-svg-icons'
+import {faBell, faBriefcase, faCalendarDays, faCamera, faCircleCheck, faClock, faCog, faComments, faDesktop, faEnvelope, faGlobe, faHeadset, faLocationDot, faLock, faMobilePhone, faPaperPlane, faPhone, faShieldHalved, faTrash, faUserCheck, faXmark} from '@fortawesome/free-solid-svg-icons'
 import {faGithub} from '@fortawesome/free-brands-svg-icons'
 
 const ProfileSettings = ()=>{
@@ -165,7 +165,7 @@ const ProfileSettings = ()=>{
                             <h6 className="fw-bold px-2 mb-3">Need Help?</h6>
                             <p className="text-muted">Contact support team for account or profile issues.</p>
 
-                            <button className="w-100 btn btn-outline-primary rounded-3"><FontAwesomeIcon icon={faComments} className="me-2" />Chat Support</button>
+                            <button className="w-100 btn btn-outline-primary rounded-3" onClick={()=>setShowChat(true)}><FontAwesomeIcon icon={faComments} className="me-2" />Chat Support</button>
                         </div>
                     </div>
                 </div>
@@ -451,11 +451,53 @@ const ProfileSettings = ()=>{
                             </div>
                         )
                     }
-             
-
                  
                 </div>
             </div>
+
+            {
+                showChat && (
+                    <div className="position-fixed bottom-0 end-0 m-4" style={{width:"350px",zIndex:9999}}>
+                        <div className="card border-0 shadow-lg rounded-4 overflow-hidden">
+                            <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center p-3">
+                                <div className="d-flex align-items-center">
+                                    <div className="bg-white bg-opacity-25 rounded-circle d-flex justify-content-center align-items-center me-2" style={{width:"35px", height: "35px"}}>
+                                        <FontAwesomeIcon icon={faHeadset} />
+                                    </div>
+                                    <div>
+                                        <h6 className="mb-0">Support Chat</h6>
+                                        <small>Usually replies in a few minutes</small>
+                                    </div>
+                                </div>
+                                <button className="btn btn-sm text-white" onClick={()=>setShowChat(false)}>
+                                    <FontAwesomeIcon icon={faXmark} />
+                                </button>
+                            </div>
+                            <div className="card-body bg-light" style={{height:"340px", overflowY:"auto"}}>
+                                {
+                                    messages.map(message=>(
+                                        <div key={message.id} className={`d-flex ${message.sender === "user" ? "justify-content-end" : "justify-content-start"} mb-3`}>
+                                            <div className={`${message.sender === "user" ? "bg-primary text-white" : "bg-white text-dark"} rounded-4 shadow p-3`} style={{maxWidth: "75%"}}>{message.text}</div>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                            <div className="card-footer bg-white border-0 p-3">
+                                <div className="input-group">
+                                    <input type="text" className="form-control" placeholder="Type a message...." value={chatInput} onChange={(e)=>setChatInput(e.target.value)} 
+                                    onKeyDown={(e)=>{
+                                        if(e.key === "Enter"){
+                                            sendMessageHandler()
+                                        }
+                                    }}
+                                    />
+                                    <button className="btn btn-primary" onClick={sendMessageHandler}><FontAwesomeIcon icon={faPaperPlane} /></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
            
         </div>
     )

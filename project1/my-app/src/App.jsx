@@ -43,7 +43,7 @@ function App() {
 						<Route path='/' element={<Dashboard/>}></Route>
 						<Route path='/dashboard' element={<Dashboard/>}></Route>
 						
-						<Route path='/acountSettings' element={<AccountSettings/>}></Route>
+						<Route path='/account' element={<AccountSettings/>}></Route>
 						<Route path='/analytics' element={<Analytics/>}></Route>
 						<Route path='/calendar' element={<Calendar/>}></Route>
 
