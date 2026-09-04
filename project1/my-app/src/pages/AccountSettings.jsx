@@ -1,11 +1,18 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faGithub} from '@fortawesome/free-brands-svg-icons'
+import {faGithub, faGoogle, faFacebook} from '@fortawesome/free-brands-svg-icons'
 import { faCheckCircle, faCloudDownload, faCreditCard, faDatabase, faEarth, faEllipsisVertical, faLock, faPlus, faReceipt, faRocket, faServer, faUsers } from "@fortawesome/free-solid-svg-icons";
 
 const AccountSettings = ()=>{
     
     const [showChat,setShowChat] = useState(false);
+
+    const [account,setAccount] = useState({
+        datasharing:false,
+        searchvisibility: true,
+        loginapproval: true,
+        autorenew: true
+    }) 
 
     const invoices = [
         {
@@ -52,23 +59,42 @@ const AccountSettings = ()=>{
             name: "Google",
             email: "susu@gmail.com",
             connected: true,
-            icon:""
+            icon: faGoogle
         },
         {
-            id:1,
+            id:2,
             name: "Github",
             email: "susu@gmail.com",
             connected: true,
-            icon:""
+            icon: faGithub
         },
         {
-            id:1,
+            id:3,
             name: "Facebook",
             email: "susu@gmail.com",
             connected: false,
-            icon:""
+            icon: faFacebook
         },
     ]);
+
+    const toggleHandler = (id)=>{
+
+        setConnectedApps(
+            connectedApps.map(app=>
+                app.id == id ? {
+                    ...app,connected: !app.connected,
+                    email: app.connected ? "Not connected" : "Connected account"
+                } : app
+            )
+        )
+    }
+
+    const accountChangeHandler = (name)=>{
+        setAccount({
+            ...account,
+            [name]: !account[name]
+        })
+    }
 
     return (
         <div>
@@ -341,17 +367,94 @@ const AccountSettings = ()=>{
                                 </div>
                              
                             </div>
-                                        
-                            <div className="alert alert-light border mt-4 mb-0">
-                                <FontAwesomeIcon icon={faEarth} className="text-primary me-2"/>
-                                These settings affect reports, billing and dashboard format.
-                            </div>
                         </div>
                     </div>
 
                 </div>
                 <div className="col-md-4">
+                    <div className="card border-0 shadow-sm rounded-4 mb-4">
+                        <div className="card-body p-4">
+                            <h6 className="fw-bold mb-3">Connected Accounts</h6>
+                            {
+                                connectedApps.map(app=>(
+                                    <div key={app.id} className="d-flex justify-content-between align-items-center border rounded-4 p-3 mb-3">
+                                        <div className="d-flex align-items-center">
+                                            <div className="bg-light rounded-circle d-flex justify-content-center align-items-center me-3" style={{width:"42px",height: "42px"}}>
+                                                <FontAwesomeIcon icon={app.icon} />
+                                            </div>
+                                            <div>
+                                                <h6 className="fw-bold mb-1">{app.name}</h6>
+                                                <p className="text-muted mb-0 small">{app.email}</p>
+                                            </div>
+                                        </div>
+                                        <button className={`btn btn-sm ${app.connected ? 'btn-outline-danger' : 'btn-primary'}`} onClick={()=>toggleHandler(app.id)}>{app.connected ? "Disconnect" : "Connect"}</button>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </div>
 
+                    <div className="card border-0 shadow-sm rounded-4 mb-4">
+                        <div className="card-body p-4">
+                            <h6 className="fw-bold mb-3">Privacy Control</h6>
+                            {
+                                [
+                                    [
+                                        "datasharing",
+                                        "Data Sharing",
+                                        "Share anonymous suage data."
+                                    ],
+                                    [
+                                        "searchvisibility",
+                                        "Search Visibility",
+                                        "Allow team members to find this account."
+                                    ],
+                                    [
+                                        "loginapproval",
+                                        "Login Approval",
+                                        "Request approval for suspicious login."
+                                    ],
+                                    [
+                                        "autorenew",
+                                        "Auto Renew",
+                                        "Automatically renew subscription"
+                                    ],
+                                ].map(([name,title,description])=>(
+                                    <div key={name} className="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                                        <div className="d-flex align-items-center">
+                                            <div>
+                                                <h6 className="fw-bold mb-1">{title}</h6>
+                                                <p className="text-muted mb-0 small">{description}</p>
+                                            </div>
+                                        </div>
+                                        <div className="form-check form-switch">
+                                            <input type="checkbox" name={name} className="form-check-input" checked={account[name]} onChange={()=>accountChangeHandler(name)} />
+                                        </div>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </div>
+
+                    <div className="card border-0 shadow-sm rounded-4 mb-4">
+                        <div className="card-body p-4">
+                            <h6 className="fw-bold mb-3">Privacy Control</h6>
+                            {
+                                [
+                                    "Priority support",
+                                    "5 team members",
+                                    "10GB Storage",
+                                    "10,000 API requests",
+                                    "Advanced reports"
+                                ].map((items,idx)=>(
+                                    <div key={idx} className="d-flex align-items-center mb-3">
+                                        <FontAwesomeIcon icon={faCheckCircle} className="text-success me-2" />
+                                        <span>{items}</span>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
             
