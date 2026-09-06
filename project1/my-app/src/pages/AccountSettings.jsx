@@ -59,21 +59,21 @@ const AccountSettings = ()=>{
             name: "Google",
             email: "susu@gmail.com",
             connected: true,
-            icon: faGoogle
+            icon: <FontAwesomeIcon icon={faGoogle} />
         },
         {
             id:2,
             name: "Github",
             email: "susu@gmail.com",
             connected: true,
-            icon: faGithub
+            icon: <FontAwesomeIcon icon={faGithub} />
         },
         {
             id:3,
             name: "Facebook",
             email: "susu@gmail.com",
             connected: false,
-            icon: faFacebook
+            icon: <FontAwesomeIcon icon={faFacebook} />
         },
     ]);
 
@@ -89,11 +89,21 @@ const AccountSettings = ()=>{
         )
     }
 
-    const accountChangeHandler = (name)=>{
+    const accountChangeHandler = (e)=>{
+        const {name,checked,type,value} = e.target;
+        
         setAccount({
             ...account,
-            [name]: !account[name]
+            [name] : type == 'checkbox' ? checked : value
         })
+    }
+
+    const saveChangesHandler = ()=>{
+        alert("Save Successfully");
+    }
+
+    const exportDataHandler = ()=>{
+        alert("Your account data export is successfully.");
     }
 
     return (
@@ -104,7 +114,7 @@ const AccountSettings = ()=>{
                     <p className="text-muted mb-0">Manage billing, scbscription, usage, integration and account data.</p>
                 </div>
 
-                <button className="btn btn-primary ">Save Changes</button>
+                <button className="btn btn-primary " onClick={saveChangesHandler}>Save Changes</button>
             </div>
 
             <div className="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
@@ -353,7 +363,7 @@ const AccountSettings = ()=>{
                                         <FontAwesomeIcon icon={faCloudDownload} className="text-primary fs-3 mb-3"/>
                                         <h6 className="fw-bold">Export Data</h6>
                                         <p className="text-muted small">Download account settings, billing logs and system usage.</p>
-                                        <button type="button" className="btn btn-outline-primary btn-sm">Export Data</button>
+                                        <button type="button" className="btn btn-outline-primary btn-sm" onClick={exportDataHandler}>Export Data</button>
                                    </div>
                                 </div>
 
@@ -380,7 +390,7 @@ const AccountSettings = ()=>{
                                     <div key={app.id} className="d-flex justify-content-between align-items-center border rounded-4 p-3 mb-3">
                                         <div className="d-flex align-items-center">
                                             <div className="bg-light rounded-circle d-flex justify-content-center align-items-center me-3" style={{width:"42px",height: "42px"}}>
-                                                <FontAwesomeIcon icon={app.icon} />
+                                                {app.icon}
                                             </div>
                                             <div>
                                                 <h6 className="fw-bold mb-1">{app.name}</h6>
@@ -428,7 +438,7 @@ const AccountSettings = ()=>{
                                             </div>
                                         </div>
                                         <div className="form-check form-switch">
-                                            <input type="checkbox" name={name} className="form-check-input" checked={account[name]} onChange={()=>accountChangeHandler(name)} />
+                                            <input type="checkbox" name={name} className="form-check-input" checked={account[name]} onChange={accountChangeHandler} />
                                         </div>
                                     </div>
                                 ))
