@@ -162,7 +162,16 @@ https://docs.fontawesome.com/web/use-with/react
 
 
 ---------------------------------------------------------------------------
+=> Install React Icon (v ^5.7.0)
+    # Icon Documentation
+        https://react-icons.github.io/react-icons/
+    1. insstall
+        https://react-icons.github.io/react-icons/
+        npm i react-icons
 
+    2. 
+
+---------------------------------------------------------------------------
 
 => Install jQuery and Inject (v ^3.7.1 , v ^5.0.5 )
 
