@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect,useState,useMemo } from "react";
 import {FaBell, FaCalendar, FaCalendarAlt, FaCalendarCheck, FaCalendarDay, FaCheck, FaCheckCircle, FaClock, FaEdit, FaListUl,FaMapMarkerAlt,FaPlus, FaRegCheckCircle, FaSearch, FaTrashAlt, FaUsers} from "react-icons/fa"
 
 const eventtypes = {
@@ -40,6 +40,27 @@ const emptyForm = {
 
         return `${year}-${month}-${day}`;
     }
+
+    const dateFormatToOriginal = (dateformat)=>{
+        // 2026-09(-1)-27 = 2026-7-20
+
+        // dateformat.split("-").map(num => Number); // [2026,7,20]
+        const [year, month, day] = dateformat.split("-").map(num => Number(num)); // [2026,8,20]
+        return new Date(year,month - 1,day);
+    };
+
+    const timeFormatToOriginal = (time)=>{
+        // 14:30
+        if(!time) return;
+
+        const [hour,minute] = time.split(":").map(Number); // [14,30]
+    
+        return new Intl.DateTimeFormat("en-US",{
+            hour: "numeric", // 14 to 2 PM
+            minute: "2-digit" // 05
+        }).format(new Date(2000, 0, 1, hour, minute));
+    };  
+
 
     const addDays = (date, amount)=>{
         const result = new Date(date);
@@ -107,19 +128,52 @@ const initialEvents = ()=>{
     ]
 }
 
+// Load Local Storage
+const loadInitialEvents = ()=>{
+    try{
+        const savedEvents = localStorage.getItem('calendar-events');
+
+        if(!savedEvents){
+            return initialEvents();
+        }
+
+        const parsedEvents = JSON.parse(savedEvents);
+
+        return Array.isArray(parsedEvents) ? parsedEvents : initialEvents();
+
+    }catch(error){
+        console.error("Cannot loat calendar events: ",error);
+    }
+};
+
 const Calendar = ()=>{
+    const getToday = dateFormat(new Date());
+
+    const [events,setEvents] = useState(initialEvents);
+    const [selectedDay, setSelectedDay] = useState(getToday); // 2026-08-20
+    const [currentDate, setCurrentDate] = useState(new Date()); // Sun Sep 27 2026 18:06:48 GMT+0630 (Myanmar Time)
 
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState(null);
-
-    const [formError, setFormError] = useState("");
-
-    const getToday = dateFormat(new Date());
 
     const [formData,setFormData] = useState({
         ...emptyForm,
         date: getToday
     });
+    const [formError, setFormError] = useState("");
+
+    const [search,setSearch] = useState("");
+    const [typeFilter, setTypeFilter] = useState("All");
+
+    // Save Local Storage
+    useEffect(()=>{
+        try{
+            localStorage.setItem("calendar-events",JSON.stringify(events));
+        }catch(error){
+            console.error("Cannot save calendar events: ",error);
+        }
+    },[events])
+
 
     // Start modal keyboard control
     useEffect(()=>{
@@ -132,6 +186,38 @@ const Calendar = ()=>{
         }
         document.addEventListener("keydown",escapseHandler);
     },[])
+
+    // Calendar Days useMemo = Expensive Calculation, Filtering, fetch Day Date Year, Data Formatting
+    const calendarDays = useMemo(()=>{
+        const year = currentDate.getFullYear(); // 2026
+        const month = currentDate.getMonth(); // 7 index
+
+        const firstDayOfMonth = new Date(year,month,1); // Tue Sep 01 2026 00:00:00 GMT+0630 (Myanmar Time)
+
+        const gridStartDate = addDays(firstDayOfMonth, -firstDayOfMonth.getDay()); // Sun Aug 30 2026 00:00:00 GMT+0630 (Myanmar Time)
+        console.log(gridStartDate);
+
+        return Array.from({length:42},(_,index)=>addDays(gridStartDate,index)); // 0 to 41 // 26+0 = 26 // 26+1 = 27
+
+        return;
+    },[currentDate]);
+
+    // Filter Events
+    const filterEvents = useMemo(()=>{
+        const keyword = search.trim().toLowerCase();
+
+        return events.filter((event)=>{
+            const title = String(event.title || "").toLowerCase();
+            const location = String(event.location || "").toLowerCase();
+            const description = String(event.description || "").toLowerCase();
+
+            const matchesType = typeFilter === "All" || typeFilter === event.type;
+
+            const matchesSearch = !keyword || title.includes(keyword) || location.includes(keyword) || description.includes(keyword);
+
+            return matchesSearch && matchesType;
+        });
+    },[events, search, typeFilter]);
     // End modal keyboard control
 
     const opencreateModal = ()=>{
