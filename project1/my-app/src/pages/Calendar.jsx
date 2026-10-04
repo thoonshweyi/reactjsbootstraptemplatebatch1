@@ -1,5 +1,5 @@
 import React, { useEffect,useState,useMemo } from "react";
-import {FaBell, FaCalendar, FaCalendarAlt, FaCalendarCheck, FaCalendarDay, FaCheck, FaCheckCircle, FaClock, FaEdit, FaListUl,FaMapMarkerAlt,FaPlus, FaRegCheckCircle, FaSearch, FaTrashAlt, FaUsers} from "react-icons/fa"
+import {FaBell, FaCalendar, FaCalendarAlt, FaCalendarCheck, FaCalendarDay, FaCheck, FaCheckCircle, FaChevronLeft, FaChevronRight, FaClock, FaEdit, FaListUl,FaMapMarkerAlt,FaPlus, FaRegCheckCircle, FaSearch, FaTrashAlt, FaUsers} from "react-icons/fa"
 
 const eventtypes = {
     Meeting:{
@@ -150,7 +150,7 @@ const Calendar = ()=>{
     const getToday = dateFormat(new Date());
 
     const [events,setEvents] = useState(initialEvents);
-    const [selectedDay, setSelectedDay] = useState(getToday); // 2026-08-20
+    const [selectedDate, setSelectedDate] = useState(getToday); // 2026-08-20
     const [currentDate, setCurrentDate] = useState(new Date()); // Sun Sep 27 2026 18:06:48 GMT+0630 (Myanmar Time)
 
     const [showModal, setShowModal] = useState(false);
@@ -218,6 +218,20 @@ const Calendar = ()=>{
             return matchesSearch && matchesType;
         });
     },[events, search, typeFilter]);
+
+    const monthEventCount = useMemo(()=>{
+        return events.filter(event=>{
+            if(!event.date) return false;
+
+            const eventDate = dateFormatToOriginal(event.date);
+
+            return (eventDate.getMonth() === currentDate.getMonth() && eventDate.getFullYear() === currentDate.getFullYear());
+        }).length;
+    },[events,currentDate]);
+
+    const todayEventCount = events.filter(event => event.date === getToday).length;
+    const reminderCount = events.filter(event => event.type === "Reminder").length;
+
     // End modal keyboard control
 
     const opencreateModal = ()=>{
@@ -247,9 +261,37 @@ const Calendar = ()=>{
     const changeHandler = ()=>{
 
     }
+
+    const goToToday = ()=>{
+        setCurrentDate(new Date());
+        setSelectedDate(getToday);
+    };
     
+    const changeMonth = (amount)=>{
+        setCurrentDate(current=>{
+            return new Date(current.getFullYear(),current.getMonth() + amount,1);
+        });
+    };
     return (
         <div>
+            {
+                <style>{`    
+                    .calendar-grid{
+                        min-width: 750px;
+                        display: grid;
+                        grid-template-columns: repeat(7,minmax(100px,1fr));
+                    }
+                    .calendar-day{
+                        min-height: 115px;
+                        text-align:left;
+                        overflow-hidden;
+                    }
+                    .day-number{
+                        width: 28px;
+                        height: 28px;
+                    }
+                `}</style>
+            }
 
             {/* Page Header */}
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -269,7 +311,7 @@ const Calendar = ()=>{
                             <span className="d-flex bg-primary bg-opacity-10 text-primary rounded-3 p-3 "><FaCalendarAlt/></span>
                             <div>
                                 <small className="text-muted mb-1">This Month</small>
-                                <h4 className="fw-bold mb-0">1</h4>
+                                <h4 className="fw-bold mb-0">{monthEventCount}</h4>
                             </div>
                         </div>
                     </div>
@@ -280,8 +322,8 @@ const Calendar = ()=>{
                         <div className="card-body d-flex align-items-center gap-3">
                             <span className="d-flex bg-success bg-opacity-10 text-success rounded-3 p-3 "><FaCalendarCheck/></span>
                             <div>
-                                <small className="text-muted mb-1">This Month</small>
-                                <h4 className="fw-bold mb-0">2</h4>
+                                <small className="text-muted mb-1">Today</small>
+                                <h4 className="fw-bold mb-0">{todayEventCount}</h4>
                             </div>
                         </div>
                     </div>
@@ -292,8 +334,8 @@ const Calendar = ()=>{
                         <div className="card-body d-flex align-items-center gap-3">
                             <span className="d-flex bg-warning bg-opacity-10 text-warning rounded-3 p-3 "><FaBell/></span>
                             <div>
-                                <small className="text-muted mb-1">This Month</small>
-                                <h4 className="fw-bold mb-0">3</h4>
+                                <small className="text-muted mb-1">Reminders</small>
+                                <h4 className="fw-bold mb-0">{reminderCount}</h4>
                             </div>
                         </div>
                     </div>
@@ -304,8 +346,8 @@ const Calendar = ()=>{
                         <div className="card-body d-flex align-items-center gap-3">
                             <span className="d-flex bg-info bg-opacity-10 text-info rounded-3 p-3 "><FaListUl/></span>
                             <div>
-                                <small className="text-muted mb-1">This Month</small>
-                                <h4 className="fw-bold mb-0">4</h4>
+                                <small className="text-muted mb-1">All Events</small>
+                                <h4 className="fw-bold mb-0">{events.length}</h4>
                             </div>
                         </div>
                     </div>
@@ -320,12 +362,12 @@ const Calendar = ()=>{
                         <div className="col-md-7">
                             <div className="input-group">
                                 <span className="input-group-text bg-white"><FaSearch className="text-muted" /></span>
-                                <input type="search" className="form-control" placeholder="Search title, location or description..."/>
+                                <input type="search" className="form-control" placeholder="Search title, location or description..." value={search} onChange={event=>setSearch(event.target.value)}/>
                             </div>
                         </div>
 
                         <div className="col-md-5">
-                            <select className="form-select">
+                            <select className="form-select" value={typeFilter} onChange={event=>setTypeFilter(event.target.value)}>
                                 <option value="All">All Event Types</option>
                                 {
                                     Object.keys(eventtypes).map(type=>(
@@ -347,7 +389,59 @@ const Calendar = ()=>{
 
                 {/* Calendar */}
                 <div className="col-md-9">
-               
+                    <div className="card border-0 shadow-sm ">
+                        <div className="card-header bg-white p-3">
+                            <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                                <div className="d-flex align-items-center gap-2">
+                                    <button type="button" className="btn btn-light btn-sm" onClick={()=>changeMonth(-1)}><FaChevronLeft/></button>
+                                    <button type="button" className="btn btn-light btn-sm" onClick={()=>changeMonth(1)}><FaChevronRight/></button>
+
+                                    <h5 className="fw-bold mb-0 ms-2">
+                                        {
+                                            currentDate.toLocaleDateString('en-US',{
+                                                month: "long",
+                                                year: "numeric"
+                                            })
+                                        }
+                                    </h5>   
+                                </div>
+                                <button type="button" className="btn btn-outline-primary btn-sm" onClick={goToToday}>Today</button>
+                            </div>
+                        </div>
+
+                        <div className="calendar-grid">
+                            {
+                                ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(day=>(
+                                    <div className="bg-light border text-center text-muted small fw-bold py-3" key={day}>{day}</div>
+                                ))
+                            }
+
+                            {
+                                calendarDays.map(date=>{
+                                    const dateKey = dateFormat(date);
+                                    const isToday = getToday === dateKey;
+                                    const isSelected = selectedDate === dateKey;
+
+                                    let dayClasss = "calendar-day border p-2";
+                                    const isOutsideMonth = date.getMonth() !== currentDate.getMonth();
+
+                                    if(isOutsideMonth){
+                                        dayClasss += " bg-light text-muted";
+                                    }else{
+                                        dayClasss += " bg-white";
+                                    }
+                                    
+                                    if(isSelected) dayClasss += " border-primary bg-primary";
+
+                                    return (
+                                        <button type="button" className={dayClasss} key={dateKey}>
+                                            <span className={`d-inline-flex justify-content-center align-items-center rounded-circle small fw-semibold day-number ${isToday ? 'bg-primary text-white' : ''}`}>{date.getDate()}</span>
+                                        </button>
+                                    )
+                                })
+                            }
+                        </div>
+                    </div>
                 </div>
 
                 {/* Right Sidebar */}
