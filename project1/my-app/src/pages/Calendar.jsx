@@ -1,5 +1,5 @@
 import React, { useEffect,useState,useMemo } from "react";
-import {FaBell, FaCalendar, FaCalendarAlt, FaCalendarCheck, FaCalendarDay, FaCheck, FaCheckCircle, FaChevronLeft, FaChevronRight, FaClock, FaEdit, FaListUl,FaMapMarkerAlt,FaPlus, FaRegCheckCircle, FaSearch, FaTrashAlt, FaUsers} from "react-icons/fa"
+import {FaBell, FaCalendar, FaCalendarAlt, FaCalendarCheck, FaCalendarDay, FaCheck, FaCheckCircle, FaChevronLeft, FaChevronRight, FaClock, FaEdit, FaListUl,FaMapMarkerAlt,FaPlus, FaRegCheckCircle, FaSearch, FaTrashAlt, FaUsers, FaVideo} from "react-icons/fa"
 
 const eventtypes = {
     Meeting:{
@@ -18,6 +18,10 @@ const eventtypes = {
         color: "danger",
         icon: FaCalendar,
     },
+}
+
+const getEventType = (type)=>{
+    return eventtypes[type] ?? eventtypes.Meeting;
 }
 
 const emptyForm = {
@@ -102,7 +106,7 @@ const initialEvents = ()=>{
             type: "Meeting",
             startTime: "11:00",
             endTime: "12:00",
-            location: "Google Metet",
+            location: "Google Meet",
             description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
         },
         {
@@ -219,6 +223,14 @@ const Calendar = ()=>{
         });
     },[events, search, typeFilter]);
 
+    const selectedEvents = useMemo(()=>{
+        return filterEvents.filter(filterEvent => filterEvent.date === selectedDate);
+    },[filterEvents,selectedDate]);
+
+    const upcomingEvents = useMemo(()=>{
+        return filterEvents.filter(filterEvent => filterEvent.date >= getToday).slice(0,5);
+    },[filterEvents,getToday]);
+
     const monthEventCount = useMemo(()=>{
         return events.filter(event=>{
             if(!event.date) return false;
@@ -234,10 +246,13 @@ const Calendar = ()=>{
 
     // End modal keyboard control
 
-    const opencreateModal = ()=>{
+    const opencreateModal = (dateKey = selectedDate)=>{
         setEditingId(null);
 
-        setFormData(emptyForm);
+        setFormData({
+            ...emptyForm,
+            date: dateKey  
+        });
         
         setFormError("");
     
@@ -245,7 +260,16 @@ const Calendar = ()=>{
     };
 
     const openeditModal = (event)=>{
+        setEditingId(event.id);
 
+        setFormData({
+            ...emptyForm,
+            ...event
+        });
+        
+        setFormError("");
+    
+        setShowModal(true); 
     };
 
     const submitHandler = ()=>{
@@ -260,12 +284,29 @@ const Calendar = ()=>{
 
     const changeHandler = ()=>{
 
-    }
+    };
+
+    const deleteHandler = (id)=>{
+        const confirmed = window.confirm("Are you sure you want to delete this event?");
+        
+        if(!confirmed) return;
+
+        setEvents(currentEvents => currentEvents.filter(event => event.id !== id));
+    };
 
     const goToToday = ()=>{
         setCurrentDate(new Date());
         setSelectedDate(getToday);
     };
+
+    const selectDay = (date)=>{
+        const dateKey = dateFormat(date);
+        setSelectedDate(dateKey);
+
+        if(date.getMonth() !== currentDate.getMonth()){
+            setCurrentDate(new Date(date.getFullYear(),date.getMonth(),1))
+        }
+    }
     
     const changeMonth = (amount)=>{
         setCurrentDate(current=>{
@@ -431,10 +472,10 @@ const Calendar = ()=>{
                                         dayClasss += " bg-white";
                                     }
                                     
-                                    if(isSelected) dayClasss += " border-primary bg-primary";
+                                    if(isSelected) dayClasss += " border-primary bg-primary-subtle";
 
                                     return (
-                                        <button type="button" className={dayClasss} key={dateKey}>
+                                        <button type="button" className={dayClasss} key={dateKey} onClick={()=>selectDay(date)} onDoubleClick={()=>opencreateModal(dateKey)}>
                                             <span className={`d-inline-flex justify-content-center align-items-center rounded-circle small fw-semibold day-number ${isToday ? 'bg-primary text-white' : ''}`}>{date.getDate()}</span>
                                         </button>
                                     )
@@ -449,45 +490,70 @@ const Calendar = ()=>{
                     <div className="card border-0 shadow-sm mb-4">
                         <div className="card-header bg-white">
                             <h6 className="fw-bold mb-1">Selected Day</h6>
-                            <small className="text-muted">Friday</small>
+                            <small className="text-muted">
+                                {
+                                    dateFormatToOriginal(selectedDate).toLocaleDateString("en-us",{
+                                        weekday: "long",
+                                        month: "short",
+                                        day: "numeric"
+                                    })
+                                }
+                            </small>
                         </div>
 
                         <div className="card-body">
-                            <div className="text-center">
-                                <FaCalendarDay size={30} className="text-secondary opacity-50 mb-3" />
-                                <p className="text-muted small mb-2">No events for this day.</p>
-                                <button type="button" className="btn btn-outline-primary btn-sm"><FaPlus className="me-1"/> Add Event</button>
-                            </div>
 
-                            <div className="border-bottom pb-3 mb-3">
-                                <div className="d-flex gap-3">
-                                    <span className="d-flex bg-success bg-opacity-10 text-success rounded-3 p-3 "><FaRegCheckCircle/></span>
-                                    <div>
-                                        <h4 className="fw-bold small mb-1">Submit sales report</h4>
-                                        <p className="text-muted smal mb-1">
-                                            <FaClock className="me-1"/>
-                                            2:00 PM - 3:00 PM
-                                        </p>
+                            {
+                                selectedEvents.length === 0 ? (
+                                <div className="text-center">
+                                    <FaCalendarDay size={30} className="text-secondary opacity-50 mb-3" />
+                                    <p className="text-muted small mb-2">No events for this day.</p>
+                                    <button type="button" className="btn btn-outline-primary btn-sm" onClick={()=>opencreateModal(selectedDate)}><FaPlus className="me-1"/> Add Event</button>
+                                </div>                                      
+                                ) : (
+                                    selectedEvents.map(event=>{
+                                        const eventType = getEventType(event.type);
+                                        const TypeIcon = eventType.icon;
+                                        
+                                        const isVideoMeeting = String(event.location || "").toLocaleLowerCase().includes('meet');
 
-                                        <p className="text-muted smal mb-1">
-                                            <FaMapMarkerAlt className="me-1"/>
-                                            Admin Office
-                                        </p>
+                                        return (
+                                        <div className="border-bottom pb-3 mb-3" key={event.id}>
+                                            <div className="d-flex gap-3">
+                                                <span className={`d-inline-flex justify-content-center align-items-center align-self-start bg-${eventType.color} bg-opacity-10 text-${eventType.color} rounded-3 p-3 `}><TypeIcon /></span>
+                                                <div>
+                                                    <h4 className="fw-bold small mb-1">{event.title}</h4>
+                                                    <p className="text-muted smal mb-1">
+                                                        <FaClock className="me-1"/>
+                                                        {timeFormatToOriginal(event.startTime)} - {timeFormatToOriginal(event.endTime)}
+                                                    </p>
 
-                                        <div className="d-flex gap-2">
-                                            {/* Accessible Rich Internet Application */}
-                                            <button type="button" className="btn btn-light btn-sm text-primary" aria-label="Edit Have to go" title="Edit event">
-                                                <FaEdit />
-                                            </button>
+                                                    <p className="text-muted smal mb-1">
+                                                        {isVideoMeeting ? (<FaVideo className="me-1" />) : (<FaMapMarkerAlt className="me-1"/>)}
+                                                        {event.location}
+                                                    </p>
 
-                                            <button type="button" className="btn btn-light btn-sm text-danger" title="Delete event">
-                                                <FaTrashAlt />
-                                            </button>
+                                                    <div className="d-flex gap-2">
+                                                        {/* Accessible Rich Internet Application */}
+                                                        <button type="button" className="btn btn-light btn-sm text-primary" aria-label="Edit Have to go" title="Edit event" onClick={()=>openeditModal(event)}>
+                                                            <FaEdit />
+                                                        </button>
+
+                                                        <button type="button" className="btn btn-light btn-sm text-danger" title="Delete event" onClick={()=>deleteHandler(event.id)}>
+                                                            <FaTrashAlt />
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
                                         </div>
+                                        )
+                                    })
+                                )
+                            }
+                            
 
-                                    </div>
-                                </div>
-                            </div>
+                          
                         </div>
                     </div>
 
@@ -497,18 +563,29 @@ const Calendar = ()=>{
                         </div>
 
                         <div className="card-body">
-                            <button type="button" className="btn border-0 rounded-0 w-100 px-0 py-3 text-start">
-                                <div className="d-flex align-items-center gap-3">
-                                    <div className="text-center">
-                                        <strong className="d-block text-primary">24</strong>
-                                        <strong className="text-uppercase text-muted">Jan</strong>
-                                    </div>
-                                    <div>
-                                        <p className="small fw-semibold mb-1">Have to shop.</p>
-                                        <small className="text-muted">10:45 AM</small>
-                                    </div>
-                                </div>
-                            </button>
+                            {
+                                upcomingEvents.length === 0 ? (
+                                        <p className="text-muted small text-center py-3 mb-0">No upcoming events.</p>
+                                ) : (
+                                    upcomingEvents.map(event =>(
+                                        <button type="button" className="btn border-0 rounded-0 w-100 px-0 py-3 text-start" key={event.id} onClick={()=>{
+                                            setSelectedDate(event.date);
+                                            setCurrentDate(dateFormatToOriginal(event.date))
+                                        }}>
+                                            <div className="d-flex align-items-center gap-3">
+                                                <div className="text-center">
+                                                    <strong className="d-block text-primary">{dateFormatToOriginal(event.date).getDate()}</strong>
+                                                    <strong className="text-uppercase text-muted">{dateFormatToOriginal(event.date).toLocaleDateString("en-Us",{month: "short"})}</strong>
+                                                </div>
+                                                <div>
+                                                    <p className="small fw-semibold mb-1">{event.title}</p>
+                                                    <small className="text-muted">{timeFormatToOriginal(event.startTime)}</small>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    ))
+                                )
+                            }
                         </div>
                     </div>
                 </div>
